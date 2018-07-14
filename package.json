@@ -1,0 +1,29 @@
+{
+  "name": "todo-list-example",
+  "version": "1.0.0",
+  "description": "Todo list example",
+  "main": "index.js",
+  "repository": "https://github.com/dacsang97/todo-list-example.git",
+  "author": "EvanNguyen <dacsang97@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html --public-url '/'"
+  },
+  "dependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^16.4.6",
+    "@types/react-dom": "^16.0.6",
+    "parcel-bundler": "^1.9.6",
+    "parcel-plugin-typescript": "^1.0.0",
+    "prettier": "^1.13.7",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^2.9.2"
+  }
+}
