@@ -1,6 +1,6 @@
 import { Todo } from '../../constants/types';
 
-export const GET_TODO_REQUEST = 'GET_TODO';
+export const GET_TODO_REQUEST = 'GET_TODO_REQUEST';
 
 export const GET_TODO_SUCCESSFUL = 'GET_TODO_SUCCESSFUL';
 
