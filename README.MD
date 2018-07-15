@@ -84,7 +84,7 @@ If you would like to submit a pull request, please make an effort to follow the 
 
 ## License
 
-[MIT](https://github.com/vuejs/vuepress/blob/master/LICENSE)
+[MIT](https://github.com/dacsang97/todo-list-example/blob/master/LICENSE)
 
 ---
 
