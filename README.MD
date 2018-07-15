@@ -14,11 +14,11 @@
 
 - [x] Change todo status
 
-- [] Delete todo
+- [ ] Delete todo
 
-- [] Drag & Drop todo
+- [ ] Drag & Drop todo
 
-- [] ...v.v
+- [ ] ...v.v
 
 ## About
 
