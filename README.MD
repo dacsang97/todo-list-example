@@ -1,12 +1,12 @@
+# Todo List Example
+
+> Advanced techniques for simple example
+
 <p align="center">
   <a href="https://vuepress.vuejs.org/" target="_blank">
     <img width="280" src="./screenshot.png" alt="logo">
   </a>
 </p>
-
-# Todo List Example
-
-> Advanced techniques for simple example
 
 ## Features
 
