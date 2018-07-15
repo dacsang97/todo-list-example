@@ -38,6 +38,7 @@ const InputContainer = styled.div`
     height: 32px;
     border-radius: 100%;
     margin-right: 5px;
+    font-size: 18px;
     border: none;
     box-shadow: 0px 6px 15px 0px rgba(207, 211, 218, 0.35);
     cursor: pointer;
