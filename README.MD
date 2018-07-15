@@ -3,8 +3,8 @@
 > Advanced techniques for simple example
 
 <p align="center">
-  <a href="https://vuepress.vuejs.org/" target="_blank">
-    <img width="280" src="./screenshot.png" alt="logo">
+  <a href="https://github.com/dacsang97/todo-list-example" target="_blank">
+    <img src="./screenshot.png" alt="logo">
   </a>
 </p>
 
