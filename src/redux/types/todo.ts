@@ -1,4 +1,5 @@
 import { Todo } from '../../constants/types';
+import { List } from 'immutable';
 
 export const GET_TODO_REQUEST = 'GET_TODO_REQUEST';
 
@@ -13,7 +14,7 @@ export const ADD_TODO = 'ADD_TODO';
 export interface ITodoState extends Record<string, any> {
   loading: boolean;
   errors: any;
-  todos: Todo[];
+  todos: List<Todo>;
 }
 
 export default {

@@ -36095,7 +36095,41 @@ var react_1 = __importDefault(require("react"));
 exports.default = function () {
     return react_1.default.createElement("p", null, "Loading ...");
 };
-},{"react":"../node_modules/react/index.js"}],"components/TodoWrapper.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js"}],"components/FilterTodo.tsx":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var react_1 = __importDefault(require("react"));
+var recompose_1 = require("recompose");
+var filterByStatus = function filterByStatus(status) {
+    return recompose_1.mapProps(function (_a) {
+        var todos = _a.todos;
+        return {
+            status: status,
+            todos: todos.filter(function (todo) {
+                return todo.status === status;
+            })
+        };
+    });
+};
+var TodoList = function TodoList(_a) {
+    var status = _a.status,
+        todos = _a.todos;
+    console.log(todos);
+    return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, status), react_1.default.createElement("ul", null, todos.map(function (todo) {
+        return react_1.default.createElement("li", { key: todo.id }, todo.title);
+    })));
+};
+var Todo = filterByStatus('todo')(TodoList);
+exports.Todo = Todo;
+var Doing = filterByStatus('doing')(TodoList);
+exports.Doing = Doing;
+var Done = filterByStatus('done')(TodoList);
+exports.Done = Done;
+},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js"}],"components/TodoWrapper.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -36105,16 +36139,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importDefault(require("react"));
 var recompose_1 = require("recompose");
 var Spinner_1 = __importDefault(require("./Spinner"));
+var FilterTodo_1 = require("../components/FilterTodo");
 var isLoading = function isLoading(_a) {
     var loading = _a.loading;
     return loading;
 };
 var enhance = recompose_1.branch(isLoading, recompose_1.renderComponent(Spinner_1.default));
-var TodoWrapper = function TodoWrapper() {
-    return react_1.default.createElement("h1", null, "Da load data xong");
+var TodoWrapper = function TodoWrapper(_a) {
+    var todos = _a.todos;
+    var data = todos.toJS();
+    return react_1.default.createElement("div", null, react_1.default.createElement(FilterTodo_1.Todo, { todos: data }), react_1.default.createElement(FilterTodo_1.Doing, { todos: data }), react_1.default.createElement(FilterTodo_1.Done, { todos: data }));
 };
 exports.default = enhance(TodoWrapper);
-},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js","./Spinner":"components/Spinner.tsx"}],"containers/TodoList.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js","./Spinner":"components/Spinner.tsx","../components/FilterTodo":"components/FilterTodo.tsx"}],"containers/TodoList.tsx":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -36233,7 +36270,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50545' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50324' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
