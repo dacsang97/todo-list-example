@@ -22,9 +22,7 @@ export default handleActions(
     },
     [types.ADD_TODO]: (state, { payload }) => {
       return state.update('todos', List(), (todos: any) =>
-        todos.push(
-          fromJS({ id: shortid.generate(), title: payload!.title, status: payload!.status }),
-        ),
+        todos.push(fromJS({ id: shortid.generate(), title: payload, status: 'active' })),
       );
     },
   },
