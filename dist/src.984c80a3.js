@@ -36478,9 +36478,11 @@ var react_1 = __importDefault(require("react"));
 var recompose_1 = require("recompose");
 var filterByStatus = function filterByStatus(status) {
     return recompose_1.mapProps(function (_a) {
-        var todos = _a.todos;
+        var todos = _a.todos,
+            render = _a.render;
         return {
             status: status,
+            render: render,
             todos: todos.filter(function (todo) {
                 return todo.status === status;
             })
@@ -36502,10 +36504,11 @@ var enhance = recompose_1.lifecycle({
 });
 var TodoList = enhance(function (_a) {
     var status = _a.status,
-        todos = _a.todos;
+        todos = _a.todos,
+        render = _a.render;
     console.log('RENDER AT:', status);
     return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, status), react_1.default.createElement("ul", null, todos.map(function (todo) {
-        return react_1.default.createElement("li", { key: todo.id }, todo.title);
+        return render({ todo: todo });
     })));
 });
 exports.TodoList = TodoList;
@@ -36513,7 +36516,39 @@ var ActiveList = filterByStatus('active')(TodoList);
 exports.ActiveList = ActiveList;
 var CompletedList = filterByStatus('completed')(TodoList);
 exports.CompletedList = CompletedList;
-},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js"}],"components/TodoWrapper.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js"}],"components/TodoItem/ActiveItem.tsx":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var react_1 = __importDefault(require("react"));
+exports.default = function (_a) {
+    var todo = _a.todo;
+    return react_1.default.createElement("div", null, todo.title, " - active");
+};
+},{"react":"../node_modules/react/index.js"}],"components/TodoItem/CompletedItem.tsx":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var react_1 = __importDefault(require("react"));
+exports.default = function (_a) {
+    var todo = _a.todo;
+    return react_1.default.createElement("div", null, todo.title, " - completed");
+};
+},{"react":"../node_modules/react/index.js"}],"components/TodoItem/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ActiveItem_1 = require("./ActiveItem");
+exports.ActiveItem = ActiveItem_1.default;
+var CompletedItem_1 = require("./CompletedItem");
+exports.CompletedItem = CompletedItem_1.default;
+},{"./ActiveItem":"components/TodoItem/ActiveItem.tsx","./CompletedItem":"components/TodoItem/CompletedItem.tsx"}],"components/TodoWrapper.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -36524,6 +36559,7 @@ var react_1 = __importDefault(require("react"));
 var recompose_1 = require("recompose");
 var Spinner_1 = __importDefault(require("./Spinner"));
 var FilterTodo_1 = require("../components/FilterTodo");
+var TodoItem_1 = require("./TodoItem");
 var isLoading = function isLoading(_a) {
     var loading = _a.loading;
     return loading;
@@ -36532,10 +36568,16 @@ var enhance = recompose_1.branch(isLoading, recompose_1.renderComponent(Spinner_
 var TodoWrapper = function TodoWrapper(_a) {
     var todos = _a.todos;
     var data = todos.toJS();
-    return react_1.default.createElement("div", null, react_1.default.createElement(FilterTodo_1.ActiveList, { todos: data }), react_1.default.createElement(FilterTodo_1.CompletedList, { todos: data }));
+    return react_1.default.createElement("div", null, react_1.default.createElement(FilterTodo_1.ActiveList, { todos: data, render: function render(_a) {
+            var todo = _a.todo;
+            return react_1.default.createElement(TodoItem_1.ActiveItem, { key: todo.id, todo: todo });
+        } }), react_1.default.createElement(FilterTodo_1.CompletedList, { todos: data, render: function render(_a) {
+            var todo = _a.todo;
+            return react_1.default.createElement(TodoItem_1.CompletedItem, { key: todo.id, todo: todo });
+        } }));
 };
 exports.default = enhance(TodoWrapper);
-},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js","./Spinner":"components/Spinner.tsx","../components/FilterTodo":"components/FilterTodo.tsx"}],"containers/TodoList.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js","./Spinner":"components/Spinner.tsx","../components/FilterTodo":"components/FilterTodo.tsx","./TodoItem":"components/TodoItem/index.ts"}],"containers/TodoList.tsx":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
