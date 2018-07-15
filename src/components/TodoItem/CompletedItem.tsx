@@ -1,6 +1,10 @@
 import React from 'react';
-import { TodoItemProps } from './index';
+import { TodoItemProps, ItemWrapper } from './index';
 
 export default ({ todo, onClick }: TodoItemProps) => {
-  return <div onClick={onClick}>{todo.title} - completed</div>;
+  return (
+    <ItemWrapper type="completed" onClick={onClick}>
+      {todo.title}
+    </ItemWrapper>
+  );
 };

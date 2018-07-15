@@ -1,10 +1,16 @@
 import React from 'react';
 import { branch, renderComponent } from 'recompose';
+import styled from 'styled-components';
 import Spinner from './Spinner';
 import { ITodoState } from '../redux/types/todo';
 import { ActiveList, CompletedList } from '../components/FilterTodo';
 import { ActiveItem, CompletedItem, TodoItemProps } from './TodoItem';
 import { TodoListProps } from '../containers/TodoList';
+
+const Wrapper = styled.div`
+  padding: 20px;
+  box-shadow: 0px -2px 2px #0000000d;
+`;
 
 interface Props extends ITodoState {}
 
@@ -15,7 +21,7 @@ const enhance = branch(isLoading, renderComponent(Spinner));
 const TodoWrapper = ({ todos, changeStatus }: TodoListProps) => {
   const data = todos.toJS();
   return (
-    <div>
+    <Wrapper>
       <ActiveList
         todos={data}
         render={({ todo }: TodoItemProps) => {
@@ -24,8 +30,6 @@ const TodoWrapper = ({ todos, changeStatus }: TodoListProps) => {
               key={todo.id}
               todo={todo}
               onClick={() => {
-                console.log('ahihi');
-                console.log(changeStatus);
                 changeStatus(todo.id, 'completed');
               }}
             />
@@ -44,7 +48,7 @@ const TodoWrapper = ({ todos, changeStatus }: TodoListProps) => {
           );
         }}
       />
-    </div>
+    </Wrapper>
   );
 };
 

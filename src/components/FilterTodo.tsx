@@ -1,5 +1,6 @@
 import React from 'react';
 import { mapProps, lifecycle } from 'recompose';
+import styled from 'styled-components';
 import { TodoStatusType, Todo } from '../constants/types';
 import { TodoItemProps } from './TodoItem/index';
 
@@ -8,6 +9,21 @@ interface Props {
   todos: Todo[];
   render?: any;
 }
+
+const Wrapper = styled.div`
+  margin-bottom: 2rem;
+  .title {
+    font-size: 18px;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #323643;
+    margin-bottom: 0.25rem;
+    border: 1px dashed #dedede;
+    margin-bottom: 1rem;
+    padding: 3px 5px;
+    border-radius: 5px;
+  }
+`;
 
 const filterByStatus = (status: TodoStatusType) =>
   mapProps<Props, any>(({ todos, render }: Props) => {
@@ -31,12 +47,13 @@ const enhance = lifecycle<Props, any>({
 });
 
 const TodoList = enhance(({ status, todos, render }: Props) => {
-  console.log('RENDER AT:', status);
   return (
-    <div>
-      <h1>{status}</h1>
+    <Wrapper>
+      <div>
+        <span className="title">{status}</span>
+      </div>
       <div>{todos.map(todo => render({ todo } as TodoItemProps))}</div>
-    </div>
+    </Wrapper>
   );
 });
 

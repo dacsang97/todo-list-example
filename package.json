@@ -21,7 +21,8 @@
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
-    "shortid": "^2.2.12"
+    "shortid": "^2.2.12",
+    "styled-components": "^3.3.3"
   },
   "devDependencies": {
     "@types/immutable": "^3.8.7",
@@ -32,6 +33,7 @@
     "@types/redux-actions": "^2.3.0",
     "@types/redux-immutable": "^3.0.38",
     "@types/shortid": "^0.0.29",
+    "node-sass": "^4.9.2",
     "parcel-bundler": "^1.9.6",
     "parcel-plugin-typescript": "^1.0.0",
     "prettier": "^1.13.7",
