@@ -33282,7 +33282,373 @@ exports.createActions = _createActions2.default;
 exports.createCurriedAction = _createCurriedAction2.default;
 exports.handleAction = _handleAction2.default;
 exports.handleActions = _handleActions2.default;
-},{"./combineActions":"../node_modules/redux-actions/es/combineActions.js","./createAction":"../node_modules/redux-actions/es/createAction.js","./createActions":"../node_modules/redux-actions/es/createActions.js","./createCurriedAction":"../node_modules/redux-actions/es/createCurriedAction.js","./handleAction":"../node_modules/redux-actions/es/handleAction.js","./handleActions":"../node_modules/redux-actions/es/handleActions.js"}],"redux/types/todo.ts":[function(require,module,exports) {
+},{"./combineActions":"../node_modules/redux-actions/es/combineActions.js","./createAction":"../node_modules/redux-actions/es/createAction.js","./createActions":"../node_modules/redux-actions/es/createActions.js","./createCurriedAction":"../node_modules/redux-actions/es/createCurriedAction.js","./handleAction":"../node_modules/redux-actions/es/handleAction.js","./handleActions":"../node_modules/redux-actions/es/handleActions.js"}],"../node_modules/shortid/lib/random/random-from-seed.js":[function(require,module,exports) {
+'use strict';
+
+// Found this seed-based random generator somewhere
+// Based on The Central Randomizer 1.3 (C) 1997 by Paul Houle (houle@msc.cornell.edu)
+
+var seed = 1;
+
+/**
+ * return a random number based on a seed
+ * @param seed
+ * @returns {number}
+ */
+function getNextValue() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed/(233280.0);
+}
+
+function setSeed(_seed_) {
+    seed = _seed_;
+}
+
+module.exports = {
+    nextValue: getNextValue,
+    seed: setSeed
+};
+
+},{}],"../node_modules/shortid/lib/alphabet.js":[function(require,module,exports) {
+'use strict';
+
+var randomFromSeed = require('./random/random-from-seed');
+
+var ORIGINAL = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
+var alphabet;
+var previousSeed;
+
+var shuffled;
+
+function reset() {
+    shuffled = false;
+}
+
+function setCharacters(_alphabet_) {
+    if (!_alphabet_) {
+        if (alphabet !== ORIGINAL) {
+            alphabet = ORIGINAL;
+            reset();
+        }
+        return;
+    }
+
+    if (_alphabet_ === alphabet) {
+        return;
+    }
+
+    if (_alphabet_.length !== ORIGINAL.length) {
+        throw new Error('Custom alphabet for shortid must be ' + ORIGINAL.length + ' unique characters. You submitted ' + _alphabet_.length + ' characters: ' + _alphabet_);
+    }
+
+    var unique = _alphabet_.split('').filter(function(item, ind, arr){
+       return ind !== arr.lastIndexOf(item);
+    });
+
+    if (unique.length) {
+        throw new Error('Custom alphabet for shortid must be ' + ORIGINAL.length + ' unique characters. These characters were not unique: ' + unique.join(', '));
+    }
+
+    alphabet = _alphabet_;
+    reset();
+}
+
+function characters(_alphabet_) {
+    setCharacters(_alphabet_);
+    return alphabet;
+}
+
+function setSeed(seed) {
+    randomFromSeed.seed(seed);
+    if (previousSeed !== seed) {
+        reset();
+        previousSeed = seed;
+    }
+}
+
+function shuffle() {
+    if (!alphabet) {
+        setCharacters(ORIGINAL);
+    }
+
+    var sourceArray = alphabet.split('');
+    var targetArray = [];
+    var r = randomFromSeed.nextValue();
+    var characterIndex;
+
+    while (sourceArray.length > 0) {
+        r = randomFromSeed.nextValue();
+        characterIndex = Math.floor(r * sourceArray.length);
+        targetArray.push(sourceArray.splice(characterIndex, 1)[0]);
+    }
+    return targetArray.join('');
+}
+
+function getShuffled() {
+    if (shuffled) {
+        return shuffled;
+    }
+    shuffled = shuffle();
+    return shuffled;
+}
+
+/**
+ * lookup shuffled letter
+ * @param index
+ * @returns {string}
+ */
+function lookup(index) {
+    var alphabetShuffled = getShuffled();
+    return alphabetShuffled[index];
+}
+
+function get () {
+  return alphabet || ORIGINAL;
+}
+
+module.exports = {
+    get: get,
+    characters: characters,
+    seed: setSeed,
+    lookup: lookup,
+    shuffled: getShuffled
+};
+
+},{"./random/random-from-seed":"../node_modules/shortid/lib/random/random-from-seed.js"}],"../node_modules/shortid/lib/random/random-byte-browser.js":[function(require,module,exports) {
+'use strict';
+
+var crypto = typeof window === 'object' && (window.crypto || window.msCrypto); // IE 11 uses window.msCrypto
+
+var randomByte;
+
+if (!crypto || !crypto.getRandomValues) {
+    randomByte = function(size) {
+        var bytes = [];
+        for (var i = 0; i < size; i++) {
+            bytes.push(Math.floor(Math.random() * 256));
+        }
+        return bytes;
+    };
+} else {
+    randomByte = function(size) {
+        return crypto.getRandomValues(new Uint8Array(size));
+    };
+}
+
+module.exports = randomByte;
+
+},{}],"../node_modules/nanoid/format.js":[function(require,module,exports) {
+/**
+ * Secure random string generator with custom alphabet.
+ *
+ * Alphabet must contain 256 symbols or less. Otherwise, the generator
+ * will not be secure.
+ *
+ * @param {generator} random The random bytes generator.
+ * @param {string} alphabet Symbols to be used in new random string.
+ * @param {size} size The number of symbols in new random string.
+ *
+ * @return {string} Random string.
+ *
+ * @example
+ * var format = require('nanoid/format')
+ *
+ * function random (size) {
+ *   var result = []
+ *   for (var i = 0; i < size; i++) result.push(randomByte())
+ *   return result
+ * }
+ *
+ * format(random, "abcdef", 5) //=> "fbaef"
+ *
+ * @name format
+ * @function
+ */
+module.exports = function (random, alphabet, size) {
+  var mask = (2 << Math.log(alphabet.length - 1) / Math.LN2) - 1
+  var step = Math.ceil(1.6 * mask * size / alphabet.length)
+
+  var id = ''
+  while (true) {
+    var bytes = random(step)
+    for (var i = 0; i < step; i++) {
+      var byte = bytes[i] & mask
+      if (alphabet[byte]) {
+        id += alphabet[byte]
+        if (id.length === size) return id
+      }
+    }
+  }
+}
+
+/**
+ * @callback generator
+ * @param {number} bytes The number of bytes to generate.
+ * @return {number[]} Random bytes.
+ */
+
+},{}],"../node_modules/shortid/lib/generate.js":[function(require,module,exports) {
+'use strict';
+
+var alphabet = require('./alphabet');
+var random = require('./random/random-byte');
+var format = require('nanoid/format');
+
+function generate(number) {
+    var loopCounter = 0;
+    var done;
+
+    var str = '';
+
+    while (!done) {
+        str = str + format(random, alphabet.get(), 1);
+        done = number < (Math.pow(16, loopCounter + 1 ) );
+        loopCounter++;
+    }
+    return str;
+}
+
+module.exports = generate;
+
+},{"./alphabet":"../node_modules/shortid/lib/alphabet.js","./random/random-byte":"../node_modules/shortid/lib/random/random-byte-browser.js","nanoid/format":"../node_modules/nanoid/format.js"}],"../node_modules/shortid/lib/build.js":[function(require,module,exports) {
+'use strict';
+
+var generate = require('./generate');
+var alphabet = require('./alphabet');
+
+// Ignore all milliseconds before a certain time to reduce the size of the date entropy without sacrificing uniqueness.
+// This number should be updated every year or so to keep the generated id short.
+// To regenerate `new Date() - 0` and bump the version. Always bump the version!
+var REDUCE_TIME = 1459707606518;
+
+// don't change unless we change the algos or REDUCE_TIME
+// must be an integer and less than 16
+var version = 6;
+
+// Counter is used when shortid is called multiple times in one second.
+var counter;
+
+// Remember the last time shortid was called in case counter is needed.
+var previousSeconds;
+
+/**
+ * Generate unique id
+ * Returns string id
+ */
+function build(clusterWorkerId) {
+    var str = '';
+
+    var seconds = Math.floor((Date.now() - REDUCE_TIME) * 0.001);
+
+    if (seconds === previousSeconds) {
+        counter++;
+    } else {
+        counter = 0;
+        previousSeconds = seconds;
+    }
+
+    str = str + generate(version);
+    str = str + generate(clusterWorkerId);
+    if (counter > 0) {
+        str = str + generate(counter);
+    }
+    str = str + generate(seconds);
+    return str;
+}
+
+module.exports = build;
+
+},{"./generate":"../node_modules/shortid/lib/generate.js","./alphabet":"../node_modules/shortid/lib/alphabet.js"}],"../node_modules/shortid/lib/is-valid.js":[function(require,module,exports) {
+'use strict';
+var alphabet = require('./alphabet');
+
+function isShortId(id) {
+    if (!id || typeof id !== 'string' || id.length < 6 ) {
+        return false;
+    }
+
+    var nonAlphabetic = new RegExp('[^' +
+      alphabet.get().replace(/[|\\{}()[\]^$+*?.-]/g, '\\$&') +
+    ']');
+    return !nonAlphabetic.test(id);
+}
+
+module.exports = isShortId;
+
+},{"./alphabet":"../node_modules/shortid/lib/alphabet.js"}],"../node_modules/shortid/lib/util/cluster-worker-id-browser.js":[function(require,module,exports) {
+'use strict';
+
+module.exports = 0;
+
+},{}],"../node_modules/shortid/lib/index.js":[function(require,module,exports) {
+'use strict';
+
+var alphabet = require('./alphabet');
+var build = require('./build');
+var isValid = require('./is-valid');
+
+// if you are using cluster or multiple servers use this to make each instance
+// has a unique value for worker
+// Note: I don't know if this is automatically set when using third
+// party cluster solutions such as pm2.
+var clusterWorkerId = require('./util/cluster-worker-id') || 0;
+
+/**
+ * Set the seed.
+ * Highly recommended if you don't want people to try to figure out your id schema.
+ * exposed as shortid.seed(int)
+ * @param seed Integer value to seed the random alphabet.  ALWAYS USE THE SAME SEED or you might get overlaps.
+ */
+function seed(seedValue) {
+    alphabet.seed(seedValue);
+    return module.exports;
+}
+
+/**
+ * Set the cluster worker or machine id
+ * exposed as shortid.worker(int)
+ * @param workerId worker must be positive integer.  Number less than 16 is recommended.
+ * returns shortid module so it can be chained.
+ */
+function worker(workerId) {
+    clusterWorkerId = workerId;
+    return module.exports;
+}
+
+/**
+ *
+ * sets new characters to use in the alphabet
+ * returns the shuffled alphabet
+ */
+function characters(newCharacters) {
+    if (newCharacters !== undefined) {
+        alphabet.characters(newCharacters);
+    }
+
+    return alphabet.shuffled();
+}
+
+/**
+ * Generate unique id
+ * Returns string id
+ */
+function generate() {
+  return build(clusterWorkerId);
+}
+
+// Export all other functions as properties of the generate function
+module.exports = generate;
+module.exports.generate = generate;
+module.exports.seed = seed;
+module.exports.worker = worker;
+module.exports.characters = characters;
+module.exports.isValid = isValid;
+
+},{"./alphabet":"../node_modules/shortid/lib/alphabet.js","./build":"../node_modules/shortid/lib/build.js","./is-valid":"../node_modules/shortid/lib/is-valid.js","./util/cluster-worker-id":"../node_modules/shortid/lib/util/cluster-worker-id-browser.js"}],"../node_modules/shortid/index.js":[function(require,module,exports) {
+'use strict';
+module.exports = require('./lib/index');
+
+},{"./lib/index":"../node_modules/shortid/lib/index.js"}],"redux/types/todo.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33308,6 +33674,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var _a;
 var immutable_1 = require("immutable");
 var redux_actions_1 = require("redux-actions");
+var shortid_1 = __importDefault(require("shortid"));
 var todo_1 = __importDefault(require("../types/todo"));
 var INITIAL_STATE = immutable_1.fromJS({
     loading: true,
@@ -33322,8 +33689,13 @@ exports.default = redux_actions_1.handleActions((_a = {}, _a[todo_1.default.GET_
 }, _a[todo_1.default.GET_TODO_FAILURE] = function (state, _a) {
     var payload = _a.payload;
     return state.set('errors', immutable_1.fromJS(payload)).set('loading', false);
+}, _a[todo_1.default.ADD_TODO] = function (state, _a) {
+    var payload = _a.payload;
+    return state.update('todos', immutable_1.List(), function (todos) {
+        return todos.push(immutable_1.fromJS({ id: shortid_1.default.generate(), title: payload.title, status: payload.status }));
+    });
 }, _a), INITIAL_STATE);
-},{"immutable":"../node_modules/immutable/dist/immutable.js","redux-actions":"../node_modules/redux-actions/es/index.js","../types/todo":"redux/types/todo.ts"}],"redux/reducers/index.ts":[function(require,module,exports) {
+},{"immutable":"../node_modules/immutable/dist/immutable.js","redux-actions":"../node_modules/redux-actions/es/index.js","shortid":"../node_modules/shortid/index.js","../types/todo":"redux/types/todo.ts"}],"redux/reducers/index.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -36062,8 +36434,8 @@ var todo_1 = __importDefault(require("../types/todo"));
 var data_1 = __importDefault(require("../../constants/data"));
 var _b = redux_actions_1.createActions((_a = {}, _a[todo_1.default.CHANGE_STATUS] = function (id, status) {
     return { id: id, status: status };
-}, _a[todo_1.default.ADD_TODO] = function (title) {
-    return title;
+}, _a[todo_1.default.ADD_TODO] = function (title, status) {
+    return { title: title, status: status };
 }, _a[todo_1.default.GET_TODO_SUCCESSFUL] = function (todos) {
     return todos;
 }, _a[todo_1.default.GET_TODO_FAILURE] = function (errors) {
@@ -36115,19 +36487,31 @@ var filterByStatus = function filterByStatus(status) {
         };
     });
 };
+var enhance = recompose_1.lifecycle({
+    shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
+        var oldTodos = this.props.todos;
+        var shouldUpdate = false;
+        nextProps.todos.forEach(function (todo, id) {
+            if (!oldTodos[id]) {
+                return shouldUpdate = true;
+            }
+            if (todo.id !== oldTodos[id].id) return shouldUpdate = true;
+        });
+        return shouldUpdate;
+    }
+});
 var TodoList = function TodoList(_a) {
     var status = _a.status,
         todos = _a.todos;
-    console.log(todos);
     return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, status), react_1.default.createElement("ul", null, todos.map(function (todo) {
         return react_1.default.createElement("li", { key: todo.id }, todo.title);
     })));
 };
-var Todo = filterByStatus('todo')(TodoList);
+var Todo = filterByStatus('todo')(enhance(TodoList));
 exports.Todo = Todo;
-var Doing = filterByStatus('doing')(TodoList);
+var Doing = filterByStatus('doing')(enhance(TodoList));
 exports.Doing = Doing;
-var Done = filterByStatus('done')(TodoList);
+var Done = filterByStatus('done')(enhance(TodoList));
 exports.Done = Done;
 },{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js"}],"components/TodoWrapper.tsx":[function(require,module,exports) {
 "use strict";
@@ -36212,7 +36596,10 @@ var TodoList = /** @class */function (_super) {
         this.props.getAllTodos();
     };
     TodoList.prototype.render = function () {
-        return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Todo List"), react_1.default.createElement(TodoWrapper_1.default, __assign({}, this.props)));
+        var _this = this;
+        return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Todo List"), react_1.default.createElement("button", { onClick: function onClick() {
+                return _this.props.addTodo('xxx', 'doing');
+            } }, "ADD TODO"), react_1.default.createElement(TodoWrapper_1.default, __assign({}, this.props)));
     };
     return TodoList;
 }(react_1.PureComponent);
@@ -36222,7 +36609,7 @@ var mapStateToProps = function mapStateToProps(state) {
         loading: state.get('todo').get('loading')
     };
 };
-exports.default = react_redux_1.connect(mapStateToProps, { getAllTodos: todo_2.getAllTodos })(TodoList);
+exports.default = react_redux_1.connect(mapStateToProps, { getAllTodos: todo_2.getAllTodos, addTodo: todo_2.addTodo })(TodoList);
 },{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js","react-redux":"../node_modules/react-redux/es/index.js","../redux/selectors/todo":"redux/selectors/todo.ts","../redux/actions/todo":"redux/actions/todo.ts","../components/Spinner":"components/Spinner.tsx","../components/TodoWrapper":"components/TodoWrapper.tsx"}],"index.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -36270,7 +36657,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50324' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49365' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
