@@ -4,27 +4,27 @@ const data: Todo[] = [
   {
     id: '23TplPdS',
     title: 'Create project',
-    status: 'done',
+    status: 'completed',
   },
   {
     id: '46Juzcyx',
     title: 'Config editor and install dependencies',
-    status: 'done',
+    status: 'completed',
   },
   {
     id: 'dBvJIh-H',
     title: 'Add some data',
-    status: 'doing',
+    status: 'completed',
   },
   {
     id: '2WEKaVNO',
     title: 'Add Redux and Redux utilities',
-    status: 'todo',
+    status: 'active',
   },
   {
     id: 'dogPzIz8',
     title: 'Re-style website',
-    status: 'todo',
+    status: 'active',
   },
 ];
 

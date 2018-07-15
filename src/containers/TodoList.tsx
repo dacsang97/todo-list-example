@@ -24,7 +24,7 @@ class TodoList extends PureComponent<Props> {
     return (
       <div>
         <h1>Todo List</h1>
-        <button onClick={() => this.props.addTodo('xxx', 'doing')}>ADD TODO</button>
+        <button onClick={() => this.props.addTodo('xxx', 'active')}>ADD TODO</button>
         <TodoWrapper {...this.props} />
       </div>
     );

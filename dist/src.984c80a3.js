@@ -36402,23 +36402,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data = [{
     id: '23TplPdS',
     title: 'Create project',
-    status: 'done'
+    status: 'completed'
 }, {
     id: '46Juzcyx',
     title: 'Config editor and install dependencies',
-    status: 'done'
+    status: 'completed'
 }, {
     id: 'dBvJIh-H',
     title: 'Add some data',
-    status: 'doing'
+    status: 'completed'
 }, {
     id: '2WEKaVNO',
     title: 'Add Redux and Redux utilities',
-    status: 'todo'
+    status: 'active'
 }, {
     id: 'dogPzIz8',
     title: 'Re-style website',
-    status: 'todo'
+    status: 'active'
 }];
 exports.default = data;
 },{}],"redux/actions/todo.ts":[function(require,module,exports) {
@@ -36500,19 +36500,19 @@ var enhance = recompose_1.lifecycle({
         return shouldUpdate;
     }
 });
-var TodoList = function TodoList(_a) {
+var TodoList = enhance(function (_a) {
     var status = _a.status,
         todos = _a.todos;
+    console.log('RENDER AT:', status);
     return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, status), react_1.default.createElement("ul", null, todos.map(function (todo) {
         return react_1.default.createElement("li", { key: todo.id }, todo.title);
     })));
-};
-var Todo = filterByStatus('todo')(enhance(TodoList));
-exports.Todo = Todo;
-var Doing = filterByStatus('doing')(enhance(TodoList));
-exports.Doing = Doing;
-var Done = filterByStatus('done')(enhance(TodoList));
-exports.Done = Done;
+});
+exports.TodoList = TodoList;
+var ActiveList = filterByStatus('active')(TodoList);
+exports.ActiveList = ActiveList;
+var CompletedList = filterByStatus('completed')(TodoList);
+exports.CompletedList = CompletedList;
 },{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js"}],"components/TodoWrapper.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -36532,7 +36532,7 @@ var enhance = recompose_1.branch(isLoading, recompose_1.renderComponent(Spinner_
 var TodoWrapper = function TodoWrapper(_a) {
     var todos = _a.todos;
     var data = todos.toJS();
-    return react_1.default.createElement("div", null, react_1.default.createElement(FilterTodo_1.Todo, { todos: data }), react_1.default.createElement(FilterTodo_1.Doing, { todos: data }), react_1.default.createElement(FilterTodo_1.Done, { todos: data }));
+    return react_1.default.createElement("div", null, react_1.default.createElement(FilterTodo_1.ActiveList, { todos: data }), react_1.default.createElement(FilterTodo_1.CompletedList, { todos: data }));
 };
 exports.default = enhance(TodoWrapper);
 },{"react":"../node_modules/react/index.js","recompose":"../node_modules/recompose/dist/Recompose.esm.js","./Spinner":"components/Spinner.tsx","../components/FilterTodo":"components/FilterTodo.tsx"}],"containers/TodoList.tsx":[function(require,module,exports) {
@@ -36598,7 +36598,7 @@ var TodoList = /** @class */function (_super) {
     TodoList.prototype.render = function () {
         var _this = this;
         return react_1.default.createElement("div", null, react_1.default.createElement("h1", null, "Todo List"), react_1.default.createElement("button", { onClick: function onClick() {
-                return _this.props.addTodo('xxx', 'doing');
+                return _this.props.addTodo('xxx', 'active');
             } }, "ADD TODO"), react_1.default.createElement(TodoWrapper_1.default, __assign({}, this.props)));
     };
     return TodoList;

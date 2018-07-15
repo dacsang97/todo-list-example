@@ -29,17 +29,17 @@ const enhance = lifecycle<Props, any>({
   },
 });
 
-const TodoList = ({ status, todos }: Props) => {
+const TodoList = enhance(({ status, todos }: Props) => {
+  console.log('RENDER AT:', status);
   return (
     <div>
       <h1>{status}</h1>
       <ul>{todos.map(todo => <li key={todo.id}>{todo.title}</li>)}</ul>
     </div>
   );
-};
+});
 
-const Todo = filterByStatus('todo')(enhance(TodoList));
-const Doing = filterByStatus('doing')(enhance(TodoList));
-const Done = filterByStatus('done')(enhance(TodoList));
+const ActiveList = filterByStatus('active')(TodoList);
+const CompletedList = filterByStatus('completed')(TodoList);
 
-export { Todo, Doing, Done };
+export { ActiveList, CompletedList, TodoList };
