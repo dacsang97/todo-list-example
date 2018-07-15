@@ -37,7 +37,7 @@ const TodoList = enhance(({ status, todos, render }: Props) => {
   return (
     <div>
       <h1>{status}</h1>
-      <ul>{todos.map(todo => render({ todo } as TodoItemProps))}</ul>
+      <div>{todos.map(todo => render({ todo } as TodoItemProps))}</div>
     </div>
   );
 });
