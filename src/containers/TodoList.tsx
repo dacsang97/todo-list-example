@@ -1,24 +1,18 @@
 import React, { PureComponent } from 'react';
-import { branch, renderComponent } from 'recompose';
 import { connect } from 'react-redux';
 import { todoSelector } from '../redux/selectors/todo';
 import { getAllTodos, addTodo, changeStatus } from '../redux/actions/todo';
 import { ITodoState } from '../redux/types/todo';
-import Spinner from '../components/Spinner';
 import TodoWrapper from '../components/TodoWrapper';
 import InputForm from '../components/InputForm';
 
-const isLoading = ({ loading }: Props) => loading;
-
-const withLoading = branch(isLoading, renderComponent(Spinner));
-
-interface Props extends ITodoState {
+export interface TodoListProps extends ITodoState {
   getAllTodos: any;
   addTodo: any;
   changeStatus: any;
 }
 
-class TodoList extends PureComponent<Props> {
+class TodoList extends PureComponent<TodoListProps> {
   componentDidMount() {
     this.props.getAllTodos();
   }

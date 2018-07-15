@@ -21,11 +21,9 @@ const filterByStatus = (status: TodoStatusType) =>
 const enhance = lifecycle<Props, any>({
   shouldComponentUpdate(nextProps: Props) {
     const oldTodos = this.props.todos;
+    if (nextProps.todos.length !== oldTodos.length) return true;
     let shouldUpdate = false;
     nextProps.todos.forEach((todo, id) => {
-      if (!oldTodos[id]) {
-        return (shouldUpdate = true);
-      }
       if (todo.id !== oldTodos[id].id) return (shouldUpdate = true);
     });
     return shouldUpdate;

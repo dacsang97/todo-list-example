@@ -1,6 +1,6 @@
 import React from 'react';
 import { TodoItemProps } from './index';
 
-export default ({ todo }: TodoItemProps) => {
-  return <div>{todo.title} - active</div>;
+export default ({ todo, onClick }: TodoItemProps) => {
+  return <div onClick={onClick}>{todo.title} - active</div>;
 };

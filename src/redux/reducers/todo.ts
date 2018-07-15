@@ -25,6 +25,16 @@ export default handleActions(
         todos.push(fromJS({ id: shortid.generate(), title: payload, status: 'active' })),
       );
     },
+    [types.CHANGE_STATUS]: (state, { payload }) => {
+      return state.update('todos', List(), (todos: any) => {
+        return todos.update(
+          todos.findIndex((todo: any) => todo.get('id') === payload!.id),
+          (todo: any) => {
+            return todo.set('status', payload!.status);
+          },
+        );
+      });
+    },
   },
   INITIAL_STATE,
 );
