@@ -25,6 +25,11 @@ const Title = styled.div`
   background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
 `;
 
+const Footer = styled.div`
+  margin-top: 2rem;
+  text-align: center;
+`;
+
 export interface TodoListProps extends ITodoState {
   getAllTodos: any;
   addTodo: any;
@@ -37,11 +42,14 @@ class TodoList extends PureComponent<TodoListProps> {
   }
   render() {
     return (
-      <Container>
-        <Title>Todo List</Title>
-        <InputForm onAddTodo={(value: string) => this.props.addTodo(value)} />
-        <TodoWrapper {...this.props} />
-      </Container>
+      <>
+        <Container>
+          <Title>Todo List</Title>
+          <InputForm onAddTodo={(value: string) => this.props.addTodo(value)} />
+          <TodoWrapper {...this.props} />
+        </Container>
+        <Footer>MIT Licensed | Copyright © 2018-present Evan N</Footer>
+      </>
     );
   }
 }
