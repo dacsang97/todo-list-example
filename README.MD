@@ -1,5 +1,7 @@
 # Todo List Example
 
+Cho e xin cái PR :v
+
 > Advanced techniques for simple example
 
 <p align="center">
